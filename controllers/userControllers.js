@@ -61,13 +61,13 @@ const loginUser = catchAsyncError(async (req, res, next) => {
   }
 });
 
-const lastLoginEvent = catchAsyncError(async (req, res, next) => {
-  const lastLogin = await UserLog.findOne().sort({ timeLog: -1 }).exec();
-  if (lastLogin) {
-    res.status(200).json(lastLogin);
-  } else {
-    return res.status(404).json({ message: "No login events found." });
-  }
-});
+// const lastLoginEvent = catchAsyncError(async (req, res, next) => {
+//   const lastLogin = await UserLog.findOne().sort({ timeLog: -1 }).exec();
+//   if (lastLogin) {
+//     res.status(200).json(lastLogin);
+//   } else {
+//     return res.status(404).json({ message: "No login events found." });
+//   }
+// });
 
-module.exports = { registerUser, loginUser, lastLoginEvent };
+// module.exports = { registerUser, loginUser, lastLoginEvent };
