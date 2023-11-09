@@ -1,37 +1,79 @@
-const { connectDB } = require('../config/db')
-const catchAsyncError = require('../middleWares/catchAsyncError')
-const queries = require('./user.query')
-const ErrorHandler = require("../utils/errorHandler");
-const error_code = require('../app/Constants')
+const { connectDB } = require("../config/db");
 
-module.exports.UserRegister = catchAsyncError(async (req, res, next) => {
+const registerUser = (req, res) => {
+  const { username, password, img } = req.body;
 
-    connectDB.query(queries.userRegistration, [fullname, mob, email, password, username], (err, result) => {
-        if (err) {
-            return next(new ErrorHandler("Please Enter all Fields", error_code.DB_ERROR));
+  connectDB.query(
+    "INSERT INTO registeruser (username, password, img) VALUES (?, ?, ?)",
+    [username, password, img],
+    (err, result) => {
+      if (err) throw err;
 
-        }
-        else {
-            console.log("User successfully Registered.");
-            res.status(200).send("User successfully Registered.");
-        }
-    });
+      res.send("User registered!");
+    }
+  );
+};
 
+const userImg = (req, res) => {
+  const { userId, img } = req.body;
 
-})
-module.exports.UserRegister = catchAsyncError(async (req, res, next) => {
+  connectDB.query(
+    "INSERT INTO userImg (userId, img) VALUES (?, ?)",
+    [userId, img],
+    (err, result) => {
+      if (err) throw err;
 
-    connectDB.query(queries.userRegistration, [fullname, mob, email, password, username], (err, result) => {
-        if (err) {
-            return next(new ErrorHandler("Please Enter all Fields", error_code.DB_ERROR));
+      res.send("Image uploaded!");
+    }
+  );
+};
 
-        }
-        else {
-            console.log("User successfully Registered.");
-            res.status(200).send("User successfully Registered.");
-        }
-    });
+const loginUser = (req, res) => {
+  const { username, password } = req.body;
 
+  connectDB.query(
+    "SELECT * FROM registeruser WHERE username = ? AND password = ?",
+    [username, password],
+    (err, result) => {
+      if (err) throw err;
 
-})
+      if (result.length > 0) {
+        const userId = result[0].id;
 
+        // Log user login
+        connectDB.query(
+          "INSERT INTO userLog (userId) VALUES (?)",
+          [userId],
+          (err, logResult) => {
+            if (err) throw err;
+
+            res.json("User log successful");
+          }
+        );
+      } else {
+        res.status(401).send("Invalid credentials");
+      }
+    }
+  );
+};
+
+const lastLoginEvent = (req, res) => {
+  const userId = req.params.userId;
+
+  connectDB.query(
+    // here query written
+    [userId],
+    (err, result) => {
+      if (err) throw err;
+
+      if (result.length > 0) {
+        const userDetails = result[0];
+        res.json(userDetails);
+      } else {
+        res.status(404).send("User not found");
+      }
+    }
+  );
+};
+
+module.exports = { registerUser, userImg, loginUser, lastLoginEvent };

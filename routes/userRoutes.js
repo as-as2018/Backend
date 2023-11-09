@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
-router.route("/lastlogin").get(lastLoginEvent);
+router.route("'/getUserDetails/:userId'").get(lastLoginEvent);
 
 module.exports = router;
