@@ -16,7 +16,9 @@ const mysql = require('mysql');
 const connectDB = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: ""
+  password: "admin@123",
+  database: "biostar2_ac",
+  port : 3312
 });
 
 

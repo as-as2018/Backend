@@ -64,14 +64,24 @@ const lastLoginEvent = (req, res) => {
 
   connectDB.query(
     // here query written
+    "SELECT USRID FROM t_lg202311 WHERE SRVDT = (SELECT MAX(SRVDT) FROM t_lg202311 WHERE USRID <> '') LIMIT 1;",
    
     (err, result) => {
       if (err) throw err;
 
       if (result.length > 0) {
         const userDetails = result[0];
-        console.log(userDetails);
-        res.json(userDetails);
+        connectDB.query(
+          "SELECT A.USRID,B.NM,B.Title,A.SRVDT, C.IMG,C.MIMTYP,C.CHS FROM t_lg202311 A INNER JOIN t_usr B ON A.USRID = b.usrid INNER JOIN t_usrphoto C ON B.USRUID = C.USRUID WHERE A.SRVDT = (SELECT MAX(SRVDT) FROM t_lg202311 WHERE USRID <> '') LIMIT 1;",
+         
+          (err, logs) => {
+            if (err) throw err;
+          userDetails.logs = logs;
+          console.log(userDetails);
+          res.json(logs);
+          }
+        );
+
       } else {
         res.status(404).send("User not found");
       }
@@ -79,4 +89,4 @@ const lastLoginEvent = (req, res) => {
   );
 };
 
-module.exports = { registerUser, userImg, loginUser, lastLoginEvent };
+module.exports = { lastLoginEvent };
