@@ -57,6 +57,9 @@ const loginUser = (req, res) => {
   );
 };
 
+
+
+
 const lastLoginEvent = (req, res) => {
   const userId = req.params.userId;
 
@@ -68,6 +71,7 @@ const lastLoginEvent = (req, res) => {
 
       if (result.length > 0) {
         const userDetails = result[0];
+        console.log(userDetails);
         res.json(userDetails);
       } else {
         res.status(404).send("User not found");
